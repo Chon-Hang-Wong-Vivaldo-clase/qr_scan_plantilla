@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_scan/models/scan_model.dart';
 import 'package:qr_scan/providers/db_provider.dart';
+import 'package:qr_scan/providers/scan_list_provider.dart';
 import 'package:qr_scan/providers/ui_provider.dart';
 import 'package:qr_scan/screens/screens.dart';
 import 'package:qr_scan/widgets/widgets.dart';
@@ -17,8 +18,11 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.delete_forever),
-            onPressed: () {},
-          )
+            onPressed: () {
+              Provider.of<ScanListProvider>(context, listen: false)
+                  .esborraTots();
+            },
+          ),
         ],
       ),
       body: _HomeScreenBody(),
@@ -38,20 +42,20 @@ class _HomeScreenBody extends StatelessWidget {
 
     // Canviar per a anar canviant entre pantalles
     final currentIndex = uiProvider.selectedMenuOpt;
-
-    //CREACIO TEMP DB
-    DBProvider.db.database;
-    ScanModel nouScan = ScanModel(valor: "https://paucasesnovescifp.cat");
-    DBProvider.db.insertScan(nouScan);
+    final scanListProvider =
+        Provider.of<ScanListProvider>(context, listen: false);
 
     switch (currentIndex) {
       case 0:
+        scanListProvider.carregaScansPerTipus('geo');
         return MapasScreen();
 
       case 1:
+        scanListProvider.carregaScansPerTipus('http');
         return DireccionsScreen();
 
       default:
+        scanListProvider.carregaScansPerTipus('geo');
         return MapasScreen();
     }
   }
